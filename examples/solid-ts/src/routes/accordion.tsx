@@ -9,8 +9,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(accordionControls)
-
-  const service = useMachine(accordion.machine, controls.mergeProps({ id: createUniqueId() }))
+  const service = useMachine(accordion.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => accordion.connect(service, normalizeProps))
 
   return (

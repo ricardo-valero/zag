@@ -9,16 +9,11 @@ import { useControls } from "~/hooks/use-controls"
 export default function Page() {
   const controls = useControls(carouselControls)
 
-  const service = useMachine(
-    carousel.machine,
-    controls.mergeProps({
-      id: createUniqueId(),
-      spacing: "20px",
-      slidesPerPage: 2,
-      slideCount: carouselData.length,
-      allowMouseDrag: true,
-    }),
-  )
+  const service = useMachine(carousel.machine, () => ({
+    ...controls.state(),
+    id: createUniqueId(),
+    slideCount: carouselData.length,
+  }))
 
   const api = createMemo(() => carousel.connect(service, normalizeProps))
 

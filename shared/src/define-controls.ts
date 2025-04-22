@@ -1,40 +1,57 @@
-import { deepExpand } from "./deep-get-set"
+type IsUnion<T, U = T> = [T] extends [never] ? false : T extends unknown ? ([U] extends [T] ? false : true) : never
 
-export type ControlProp =
-  | { type: "boolean"; label?: string; defaultValue?: boolean }
-  | { type: "string"; label?: string; defaultValue?: string; placeholder?: string }
-  | { type: "select"; options: readonly string[]; defaultValue?: string; label?: string }
-  | { type: "multiselect"; options: readonly string[]; defaultValue?: string[]; label?: string }
-  | { type: "number"; label?: string; defaultValue?: number; min?: number; max?: number }
+type NonUndefined<T> = T extends undefined ? never : T
+type WithDefault<T> = undefined extends T ? { defaultValue?: T } : { defaultValue: T }
+type BooleanControl<T> = WithDefault<T> & { type: "boolean" }
+type StringControl<T> = WithDefault<T> & { type: "string" }
+type NumberControl<T> = WithDefault<T> & { type: "number" }
+type SelectControl<T> = WithDefault<T> & { type: "select"; options: readonly T[] }
+type MultiSelectControl<T> = WithDefault<T[]> & { type: "multiselect"; options: readonly T[] }
 
-export type ControlRecord = Record<string, ControlProp>
-
-export type ControlValue<T extends ControlRecord> = {
-  [K in keyof T]: T[K] extends { type: "boolean" }
-    ? boolean
-    : T[K] extends { type: "string" }
-      ? string
-      : T[K] extends { type: "select" }
-        ? T[K]["options"][number]
-        : T[K] extends { type: "multiselect" }
-          ? T[K]["options"][number][]
-          : T[K] extends { type: "number" }
-            ? number
+export type ControlProp<A> =
+  NonUndefined<A> extends boolean
+    ? BooleanControl<A>
+    : NonUndefined<A> extends string
+      ? string extends NonUndefined<A>
+        ? StringControl<A> | SelectControl<A>
+        : SelectControl<A>
+      : NonUndefined<A> extends number
+        ? number extends NonUndefined<A>
+          ? NumberControl<A>
+          : SelectControl<A>
+        : NonUndefined<A> extends Array<infer U>
+          ? SelectControl<U> | MultiSelectControl<U>
+          : IsUnion<NonUndefined<A>> extends true
+            ? SelectControl<A>
             : never
+
+export type ControlRecord<T> = {
+  [K in keyof T]?: NonUndefined<T[K]> extends object ? ControlRecord<NonUndefined<T[K]>> : ControlProp<T[K]>
 }
 
-export function defineControls<T extends ControlRecord>(config: T) {
+export function defineControls<U, T = Partial<U>>(config: ControlRecord<T>) {
   return config
 }
 
-export function getControlDefaults<T extends ControlRecord>(obj: T) {
-  const result = Object.keys(obj).reduce(
-    (acc, key) => ({
-      ...acc,
-      [key]: obj[key].defaultValue,
-    }),
-    {} as ControlValue<T>,
-  )
-
-  return deepExpand(result)
+export function getControlDefaults<U, T = Partial<U>>(obj: ControlRecord<T>): T {
+  if (!obj || typeof obj !== "object") {
+    return {} as T
+  }
+  const result = {} as T
+  for (const k of Object.keys(obj)) {
+    const key = k as keyof T
+    const prop = obj[key]
+    if (!prop) continue
+    if ("type" in prop) {
+      if ("defaultValue" in prop) {
+        result[key] = prop.defaultValue as T[keyof T]
+      }
+    } else if (typeof prop === "object") {
+      const nestedDefaults = getControlDefaults(prop)
+      if (Object.keys(nestedDefaults).length > 0) {
+        result[key] = nestedDefaults as T[keyof T]
+      }
+    }
+  }
+  return result
 }

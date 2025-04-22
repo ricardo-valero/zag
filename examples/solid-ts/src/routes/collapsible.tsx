@@ -9,9 +9,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(collapsibleControls)
-
-  const service = useMachine(collapsible.machine, controls.mergeProps({ id: createUniqueId() }))
-
+  const service = useMachine(collapsible.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => collapsible.connect(service, normalizeProps))
 
   return (

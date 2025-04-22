@@ -11,7 +11,6 @@ export default function Page() {
 
   const service = useMachine(qrCode.machine, {
     id: useId(),
-    encoding: { ecc: "H" },
     ...controls.context,
   })
 

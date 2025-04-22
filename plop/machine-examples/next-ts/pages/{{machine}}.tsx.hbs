@@ -9,10 +9,7 @@ import { useControls } from "../hooks/use-controls"
 export default function Page() {
   const controls = useControls({{camelize machine}}Controls)
 
-  const service = useMachine({{camelize machine}}.machine, {
-    id: useId(),
-    ...controls.context,
-  })
+  const service = useMachine({{camelize machine}}.machine, { id: useId(), ...controls.context })
 
   const api = {{camelize machine}}.connect(service, normalizeProps)
 

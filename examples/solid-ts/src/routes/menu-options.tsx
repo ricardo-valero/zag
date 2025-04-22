@@ -13,7 +13,7 @@ export default function Page() {
   const [order, setOrder] = createSignal("")
   const [type, setType] = createSignal<string[]>([])
 
-  const service = useMachine(menu.machine, { id: createUniqueId() })
+  const service = useMachine(menu.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => menu.connect(service, normalizeProps))
 
   const radios = createMemo(() =>

@@ -93,10 +93,11 @@ const TreeNode = (props: TreeNodeProps): JSX.Element => {
 export default function Page() {
   const controls = useControls(treeviewControls)
 
-  const service = useMachine(tree.machine, {
+  const service = useMachine(tree.machine, () => ({
     id: createUniqueId(),
+    ...controls.state(),
     collection,
-  })
+  }))
 
   const api = createMemo(() => tree.connect(service, normalizeProps))
 

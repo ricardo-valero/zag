@@ -1,7 +1,7 @@
-import { deepGet, deepSet, getControlDefaults, type ControlRecord, type ControlValue } from "@zag-js/shared"
+import { getControlDefaults, type ControlRecord, type ControlProp as ControlValue } from "@zag-js/shared"
 import type { ComputedRef, UnwrapRef } from "vue"
 
-export interface UseControlsReturn<T extends ControlRecord> {
+export interface UseControlsReturn<U extends object, T extends ControlRecord<U>> {
   config: T
   context: Ref<UnwrapRef<ControlValue<T>>>
   setState: (key: string, value: any) => void
@@ -10,8 +10,8 @@ export interface UseControlsReturn<T extends ControlRecord> {
   mergeProps: <P>(props: P) => ComputedRef<ControlValue<T> & P>
 }
 
-export const useControls = <T extends ControlRecord>(config: T): UseControlsReturn<T> => {
-  const state = ref<any>(getControlDefaults(config))
+export const useControls = <U extends object, T extends ControlRecord<U>>(config: T): UseControlsReturn<U, T> => {
+  const state = ref(getControlDefaults(config))
 
   const setState = (key: string, value: any) => {
     const newState = toValue(state)

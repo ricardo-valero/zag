@@ -8,11 +8,11 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(datePickerControls)
-  const service = useMachine(datePicker.machine, {
+  const service = useMachine(datePicker.machine, () => ({
     id: createUniqueId(),
-    locale: "en",
-    selectionMode: "single",
-  })
+    selectionMode: "single" as const,
+    ...controls.state(),
+  }))
 
   const api = createMemo(() => datePicker.connect(service, normalizeProps))
 

@@ -19,21 +19,23 @@
     }),
   )
 
-  const id = $props.id()
-  const service = useMachine(combobox.machine, {
-    id,
-    get collection() {
-      return collection
-    },
-    onOpenChange() {
-      options = comboboxData
-    },
-    onInputValueChange({ inputValue }) {
-      const filtered = matchSorter(comboboxData, inputValue, { keys: ["label"] })
-      const newOptions = filtered.length > 0 ? filtered : comboboxData
-      options = newOptions
-    },
-  })
+  const service = $derived(
+    useMachine(combobox.machine, () => ({
+      ...controls.context,
+      id: "1",
+      get collection() {
+        return collection
+      },
+      onOpenChange() {
+        options = comboboxData
+      },
+      onInputValueChange({ inputValue }) {
+        const filtered = matchSorter(comboboxData, inputValue, { keys: ["label"] })
+        const newOptions = filtered.length > 0 ? filtered : comboboxData
+        options = newOptions
+      },
+    })),
+  )
 
   const api = $derived(combobox.connect(service, normalizeProps))
 </script>

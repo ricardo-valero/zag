@@ -11,10 +11,7 @@ export default function Page() {
 
   const service = useMachine(carousel.machine, {
     id: useId(),
-    spacing: "20px",
-    slidesPerPage: 2,
     slideCount: carouselData.length,
-    allowMouseDrag: true,
     ...controls.context,
   })
 

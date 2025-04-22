@@ -9,9 +9,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(hoverCardControls)
-
-  const service = useMachine(hoverCard.machine, { id: createUniqueId() })
-
+  const service = useMachine(hoverCard.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => hoverCard.connect(service, normalizeProps))
 
   return (

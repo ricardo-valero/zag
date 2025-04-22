@@ -11,13 +11,11 @@ import { useControls } from "~/hooks/use-controls"
 export default function Page() {
   const controls = useControls(selectControls)
 
-  const service = useMachine(
-    select.machine,
-    controls.mergeProps<select.Props>(() => ({
-      collection: select.collection({ items: selectData }),
-      id: createUniqueId(),
-    })),
-  )
+  const service = useMachine(select.machine, () => ({
+    ...controls.state(),
+    id: createUniqueId(),
+    collection: select.collection({ items: selectData }),
+  }))
 
   const api = createMemo(() => select.connect(service, normalizeProps))
 
@@ -36,8 +34,7 @@ export default function Page() {
 
           <form
             onInput={(e) => {
-              const form = e.currentTarget as HTMLFormElement
-              const formData = serialize(form, { hash: true })
+              const formData = serialize(e.currentTarget, { hash: true })
               console.log(formData)
             }}
           >

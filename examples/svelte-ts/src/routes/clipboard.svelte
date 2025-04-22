@@ -9,11 +9,11 @@
 
   const controls = useControls(clipboardControls)
 
-  const id = $props.id()
-  const service = useMachine(clipboard.machine, {
-    id,
+  const service = useMachine(clipboard.machine, () => ({
+    ...controls.context,
+    id: "1",
     defaultValue: "https://github/com/chakra-ui/zag",
-  })
+  }))
 
   const api = $derived(clipboard.connect(service, normalizeProps))
 </script>

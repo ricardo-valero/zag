@@ -8,9 +8,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(progressControls)
-
-  const service = useMachine(progress.machine, { id: createUniqueId() })
-
+  const service = useMachine(progress.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => progress.connect(service, normalizeProps))
 
   return (

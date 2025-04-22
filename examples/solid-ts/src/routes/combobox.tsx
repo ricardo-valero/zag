@@ -23,24 +23,22 @@ export default function Page() {
 
   const [value, setValue] = createSignal<string[]>([])
 
-  const service = useMachine(
-    combobox.machine,
-    controls.mergeProps<combobox.Props>(() => ({
-      id: createUniqueId(),
-      value: value(),
-      onValueChange({ value }) {
-        setValue(value)
-      },
-      collection: collection(),
-      onOpenChange() {
-        setOptions(comboboxData)
-      },
-      onInputValueChange({ inputValue }) {
-        const filtered = matchSorter(comboboxData, inputValue, { keys: ["label"] })
-        setOptions(filtered.length > 0 ? filtered : comboboxData)
-      },
-    })),
-  )
+  const service = useMachine(combobox.machine, () => ({
+    id: createUniqueId(),
+    value: value(),
+    onValueChange({ value }) {
+      setValue(value)
+    },
+    collection: collection(),
+    onOpenChange() {
+      setOptions(comboboxData)
+    },
+    onInputValueChange({ inputValue }) {
+      const filtered = matchSorter(comboboxData, inputValue, { keys: ["label"] })
+      setOptions(filtered.length > 0 ? filtered : comboboxData)
+    },
+    ...controls.state(),
+  }))
 
   const api = createMemo(() => combobox.connect(service, normalizeProps))
 

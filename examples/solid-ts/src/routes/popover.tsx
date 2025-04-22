@@ -13,9 +13,7 @@ function Wrapper(props: ParentProps<{ guard: boolean }>) {
 
 export default function Page() {
   const controls = useControls(popoverControls)
-
-  const service = useMachine(popover.machine, { id: createUniqueId() })
-
+  const service = useMachine(popover.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => popover.connect(service, normalizeProps))
 
   return (

@@ -8,14 +8,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(toggleGroupControls)
-
-  const service = useMachine(
-    toggle.machine,
-    controls.mergeProps<toggle.Props>({
-      id: createUniqueId(),
-    }),
-  )
-
+  const service = useMachine(toggle.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => toggle.connect(service, normalizeProps))
 
   return (

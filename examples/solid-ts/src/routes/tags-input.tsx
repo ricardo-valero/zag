@@ -13,10 +13,11 @@ function toDashCase(str: string) {
 export default function Page() {
   const controls = useControls(tagsInputControls)
 
-  const service = useMachine(tagsInput.machine, {
+  const service = useMachine(tagsInput.machine, () => ({
     id: createUniqueId(),
+    ...controls.state(),
     defaultValue: ["React", "Vue"],
-  })
+  }))
 
   const api = createMemo(() => tagsInput.connect(service, normalizeProps))
 
@@ -59,9 +60,9 @@ export default function Page() {
         </div>
       </main>
 
-      {/* <Toolbar viz controls={controls}>
+      <Toolbar viz controls={controls}>
         <StateVisualizer state={service} context={["value"]} />
-      </Toolbar> */}
+      </Toolbar>
     </>
   )
 }

@@ -9,15 +9,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(checkboxControls)
-
-  const service = useMachine(
-    checkbox.machine,
-    controls.mergeProps({
-      id: createUniqueId(),
-      name: "checkbox",
-    }),
-  )
-
+  const service = useMachine(checkbox.machine, () => ({ ...controls.state(), id: createUniqueId(), name: "checkbox" }))
   const api = createMemo(() => checkbox.connect(service, normalizeProps))
 
   return (
@@ -26,8 +18,8 @@ export default function Page() {
         <pre>{JSON.stringify(service.prop("id"), null, 2)}</pre>
         <form
           onChange={(e) => {
-            const result = serialize(e.currentTarget, { hash: true })
-            console.log(result)
+            const formData = serialize(e.currentTarget, { hash: true })
+            console.log(formData)
           }}
         >
           <fieldset>

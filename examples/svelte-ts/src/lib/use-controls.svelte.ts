@@ -1,6 +1,6 @@
 import { getControlDefaults, type ControlRecord, deepSet } from "@zag-js/shared"
 
-export function useControls<T extends ControlRecord>(config: T) {
+export function useControls<T>(config: ControlRecord<T>) {
   const context = $state(getControlDefaults(config))
 
   const controls = {
@@ -10,7 +10,7 @@ export function useControls<T extends ControlRecord>(config: T) {
     get context() {
       return context
     },
-    setContext(key: string, value: any) {
+    setContext<V>(key: string, value: V) {
       deepSet(context, key, value)
     },
   }
@@ -18,4 +18,4 @@ export function useControls<T extends ControlRecord>(config: T) {
   return controls
 }
 
-export type UseControlsReturn<T extends ControlRecord = ControlRecord> = ReturnType<typeof useControls<T>>
+export type UseControlsReturn<T> = ReturnType<typeof useControls<T>>

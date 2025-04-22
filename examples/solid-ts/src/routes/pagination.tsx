@@ -9,11 +9,12 @@ import { useControls } from "~/hooks/use-controls"
 export default function Page() {
   const controls = useControls(paginationControls)
 
-  const service = useMachine(pagination.machine, {
+  const service = useMachine(pagination.machine, () => ({
     id: createUniqueId(),
     count: paginationData.length,
     onPageChange: console.log,
-  })
+    ...controls.state(),
+  }))
 
   const api = createMemo(() => pagination.connect(service, normalizeProps))
 

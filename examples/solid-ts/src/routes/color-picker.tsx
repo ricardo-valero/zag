@@ -26,15 +26,13 @@ const EyeDropIcon = () => (
 export default function Page() {
   const controls = useControls(colorPickerControls)
 
-  const service = useMachine(
-    colorPicker.machine,
-    controls.mergeProps<colorPicker.Props>({
-      id: createUniqueId(),
-      name: "color",
-      defaultFormat: "hsla",
-      defaultValue: colorPicker.parse("hsl(0, 100%, 50%)"),
-    }),
-  )
+  const service = useMachine(colorPicker.machine, () => ({
+    id: createUniqueId(),
+    name: "color",
+    defaultFormat: "hsla" as const,
+    defaultValue: colorPicker.parse("hsl(0, 100%, 50%)"),
+    ...controls.state(),
+  }))
 
   const api = createMemo(() => colorPicker.connect(service, normalizeProps))
 
@@ -42,8 +40,9 @@ export default function Page() {
     <>
       <main class="color-picker">
         <form
-          onChange={(e) => {
-            console.log("change:", serialize(e.currentTarget, { hash: true }))
+          onInput={(e) => {
+            const formData = serialize(e.currentTarget, { hash: true })
+            console.log(formData)
           }}
         >
           <input {...api().getHiddenInputProps()} />
@@ -80,7 +79,7 @@ export default function Page() {
                     <div {...api().getChannelSliderThumbProps({ channel: "alpha" })} />
                   </div>
 
-                  <Show when={api().format.startsWith("hsl")}>
+                  <Show when={api().format === "hsla"}>
                     <div style={{ display: "flex", width: "100%" }}>
                       <span>H</span> <input {...api().getChannelInputProps({ channel: "hue" })} />
                       <span>S</span> <input {...api().getChannelInputProps({ channel: "saturation" })} />
@@ -89,7 +88,7 @@ export default function Page() {
                     </div>
                   </Show>
 
-                  <Show when={api().format.startsWith("rgb")}>
+                  <Show when={api().format === "rgba"}>
                     <div style={{ display: "flex", width: "100%" }}>
                       <span>R</span> <input {...api().getChannelInputProps({ channel: "red" })} />
                       <span>G</span> <input {...api().getChannelInputProps({ channel: "green" })} />
@@ -98,7 +97,7 @@ export default function Page() {
                     </div>
                   </Show>
 
-                  <Show when={api().format.startsWith("hsb")}>
+                  <Show when={api().format === "hsba"}>
                     <div style={{ display: "flex", width: "100%" }}>
                       <span>H</span> <input {...api().getChannelInputProps({ channel: "hue" })} />
                       <span>S</span> <input {...api().getChannelInputProps({ channel: "saturation" })} />

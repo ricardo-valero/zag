@@ -9,13 +9,11 @@ import { useControls } from "~/hooks/use-controls"
 export default function Page() {
   const controls = useControls(editableControls)
 
-  const service = useMachine(
-    editable.machine,
-    controls.mergeProps<editable.Props>({
-      id: createUniqueId(),
-      defaultValue: "Hello World",
-    }),
-  )
+  const service = useMachine(editable.machine, () => ({
+    ...controls.state(),
+    id: createUniqueId(),
+    defaultValue: "Hello World",
+  }))
 
   const api = createMemo(() => editable.connect(service, normalizeProps))
 

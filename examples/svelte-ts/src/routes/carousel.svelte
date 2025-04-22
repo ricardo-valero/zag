@@ -8,14 +8,11 @@
 
   const controls = useControls(carouselControls)
 
-  const id = $props.id()
-  const service = useMachine(carousel.machine, {
-    id,
-    spacing: "20px",
-    slidesPerPage: 2,
+  const service = useMachine(carousel.machine, () => ({
+    ...controls.context,
+    id: "1",
     slideCount: carouselData.length,
-    allowMouseDrag: true,
-  })
+  }))
 
   const api = $derived(carousel.connect(service, normalizeProps))
 </script>

@@ -8,8 +8,7 @@ import { useControls } from "../hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(angleSliderControls)
-
-  const service = useMachine(angleSlider.machine, controls.mergeProps({ id: createUniqueId() }))
+  const service = useMachine(angleSlider.machine, () => ({ ...controls.state(), id: createUniqueId() }))
   const api = createMemo(() => angleSlider.connect(service, normalizeProps))
 
   return (

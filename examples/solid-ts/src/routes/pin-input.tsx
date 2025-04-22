@@ -10,14 +10,12 @@ import { useControls } from "~/hooks/use-controls"
 export default function Page() {
   const controls = useControls(pinInputControls)
 
-  const service = useMachine(
-    pinInput.machine,
-    controls.mergeProps({
-      id: createUniqueId(),
-      name: "test",
-      count: 3,
-    }),
-  )
+  const service = useMachine(pinInput.machine, () => ({
+    ...controls.state(),
+    id: createUniqueId(),
+    name: "test",
+    count: 3,
+  }))
 
   const api = createMemo(() => pinInput.connect(service, normalizeProps))
 

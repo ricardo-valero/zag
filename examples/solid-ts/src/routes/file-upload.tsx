@@ -8,9 +8,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(fileUploadControls)
-
-  const service = useMachine(fileUpload.machine, { id: createUniqueId() })
-
+  const service = useMachine(fileUpload.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => fileUpload.connect(service, normalizeProps))
 
   return (

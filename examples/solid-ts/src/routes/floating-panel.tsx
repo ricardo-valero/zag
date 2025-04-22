@@ -9,9 +9,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(floatingPanelControls)
-
-  const service = useMachine(floatingPanel.machine, { id: createUniqueId() })
-
+  const service = useMachine(floatingPanel.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => floatingPanel.connect(service, normalizeProps))
 
   return (

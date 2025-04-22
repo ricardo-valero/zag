@@ -9,13 +9,11 @@ import { useControls } from "../hooks/use-controls"
 export default function Page() {
   const controls = useControls(stepsControls)
 
-  const service = useMachine(
-    steps.machine,
-    controls.mergeProps<steps.Props>({
-      id: createUniqueId(),
-      count: stepsData.length,
-    }),
-  )
+  const service = useMachine(steps.machine, () => ({
+    id: createUniqueId(),
+    count: stepsData.length,
+    ...controls.state(),
+  }))
 
   const api = createMemo(() => steps.connect(service, normalizeProps))
 

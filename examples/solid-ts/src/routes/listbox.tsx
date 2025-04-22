@@ -15,13 +15,11 @@ export default function Page() {
   const controls = useControls(listboxControls)
   const collection = listbox.collection({ items: selectData })
 
-  const service = useMachine(
-    listbox.machine as listbox.Machine<Item>,
-    controls.mergeProps({
-      collection,
-      id: createUniqueId(),
-    }),
-  )
+  const service = useMachine(listbox.machine as listbox.Machine<Item>, () => ({
+    id: createUniqueId(),
+    ...controls.state(),
+    collection,
+  }))
 
   const api = createMemo(() => listbox.connect(service, normalizeProps))
 

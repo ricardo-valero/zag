@@ -1,5 +1,5 @@
 import { dataAttr } from "@zag-js/dom-query"
-import { ReactNode, useState } from "react"
+import { JSX, ReactNode, useState } from "react"
 
 type ToolbarProps = React.HTMLAttributes<HTMLDivElement> & {
   controls?: null | (() => JSX.Element)

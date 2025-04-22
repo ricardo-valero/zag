@@ -1,16 +1,16 @@
-<script lang="ts">
+<script lang="ts" generics="T">
   import type { UseControlsReturn } from "$lib/use-controls.svelte"
   import { dataAttr } from "@zag-js/dom-query"
   import Controls from "./controls.svelte"
   import type { Snippet } from "svelte"
 
   interface Props {
-    controls?: UseControlsReturn | null
+    controls?: UseControlsReturn<T> | null
     viz?: boolean
     children: Snippet
   }
 
-  const { controls, viz, children }: Props = $props()
+  const { controls = $bindable(), viz, children }: Props = $props()
 
   let active = $state(viz ? 1 : !controls ? 1 : 0)
 </script>
@@ -24,7 +24,7 @@
   </nav>
   {#if controls}
     <div data-content data-active={dataAttr(active === 0)}>
-      <Controls {controls} />
+      <Controls {...controls} />
     </div>
   {/if}
   <div data-content data-active={dataAttr(active === 1)}>

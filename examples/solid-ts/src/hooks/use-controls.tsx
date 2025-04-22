@@ -1,25 +1,9 @@
-import { ControlRecord, deepSet, getControlDefaults } from "@zag-js/shared"
-import { Accessor, createMemo, createSignal, mergeProps } from "solid-js"
+import { ControlRecord, getControlDefaults } from "@zag-js/shared"
+import { createSignal } from "solid-js"
 
-export function useControls<T extends ControlRecord>(config: T) {
-  const [state, __setState] = createSignal(getControlDefaults(config) as any)
-
-  const setState = (key: string, value: any) => {
-    __setState((s) => {
-      const newState = structuredClone(s)
-      deepSet(newState, key, value)
-      return newState
-    })
-  }
-
-  return {
-    state,
-    setState,
-    config,
-    mergeProps: <T extends object>(props: T | Accessor<T>): Accessor<T> => {
-      return createMemo(() => mergeProps(state(), typeof props === "function" ? props() : props))
-    },
-  }
+export function useControls<T extends object>(config: ControlRecord<T>) {
+  const [state, setState] = createSignal(getControlDefaults(config))
+  return { state, setState, config }
 }
 
-export type UseControlsReturn = ReturnType<typeof useControls>
+export type UseControlsReturn<T extends object> = ReturnType<typeof useControls<T>>

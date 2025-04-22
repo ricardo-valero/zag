@@ -17,11 +17,6 @@ export default function Page() {
     onDrawEnd(details) {
       details.getDataUrl("image/png").then(setUrl)
     },
-    drawing: {
-      fill: "red",
-      size: 4,
-      simulatePressure: true,
-    },
     ...controls.context,
   })
 

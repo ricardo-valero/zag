@@ -9,8 +9,7 @@ import { useControls } from "~/hooks/use-controls"
 
 export default function Page() {
   const controls = useControls(menuControls)
-  const service = useMachine(menu.machine, { id: createUniqueId() })
-
+  const service = useMachine(menu.machine, () => ({ id: createUniqueId(), ...controls.state() }))
   const api = createMemo(() => menu.connect(service, normalizeProps))
 
   return (

@@ -13,17 +13,13 @@
   const setUrl = (value: string) => (url = value)
 
   const id = $props.id()
-  const service = useMachine(signaturePad.machine, {
+  const service = useMachine(signaturePad.machine, () => ({
+    ...controls.context,
     id,
     onDrawEnd(details) {
       details.getDataUrl("image/png").then(setUrl)
     },
-    drawing: {
-      fill: "red",
-      size: 4,
-      simulatePressure: true,
-    },
-  })
+  }))
 
   const api = $derived(signaturePad.connect(service, normalizeProps))
 </script>
